@@ -1,0 +1,74 @@
+<div class="stack">
+  <div class="page-head">
+    <div>
+      <h1 class="title">Bill Management</h1>
+      <p class="subtitle">Track invoices, monitor payments, and manage pending bills for every project.</p>
+    </div>
+    <button class="submit" type="button" [routerLink]="['/home']">+ Create Invoice</button>
+  </div>
+
+  <div class="stats">
+    <div class="card" *ngFor="let item of summary">
+      <div class="card-icon card-icon-1"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+      <div>
+        <p class="card-label">{{ item.label }}</p>
+        <p class="card-value">{{ item.value }}</p>
+        <p class="card-note card-note-green">{{ item.note }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-three">
+    <section class="section section-wide">
+      <div class="section-head">Recent Bills</div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr class="table-head">
+              <th class="table-cell">Invoice</th>
+              <th class="table-cell">Client</th>
+              <th class="table-cell">Amount</th>
+              <th class="table-cell">Due Date</th>
+              <th class="table-cell">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-row-hover" *ngFor="let bill of bills">
+              <td class="table-cell row-title">{{ bill.id }}</td>
+              <td class="table-cell row-muted">{{ bill.client }}</td>
+              <td class="table-cell row-title">{{ bill.amount }}</td>
+              <td class="table-cell">{{ bill.due }}</td>
+              <td class="table-cell">
+                <span class="status-pill" [ngClass]="{
+                  'status-active': bill.status === 'Paid',
+                  'status-idle': bill.status === 'Pending',
+                  'status-maint': bill.status === 'Overdue'
+                }">{{ bill.status }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">Billing Notes</div>
+      <div class="form">
+        <label class="field-label">Payment Method</label>
+        <select class="select">
+          <option>Bank Transfer</option>
+          <option>UPI</option>
+          <option>Cash</option>
+        </select>
+
+        <label class="field-label">Reference Number</label>
+        <input type="text" placeholder="Enter reference" class="input">
+
+        <label class="field-label">Reminder Date</label>
+        <input type="date" class="input">
+
+        <button class="submit">Save Reminder</button>
+      </div>
+    </section>
+  </div>
+</div>

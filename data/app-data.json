@@ -1,0 +1,98 @@
+{
+  "bills": [
+    {
+      "customerName": "mayuresh",
+      "customerPhone": "",
+      "siteName": "JCB Hire",
+      "siteAddress": "",
+      "vehicleNo": "",
+      "orderNo": "",
+      "invoiceDate": "2026-08-01",
+      "subtotal": 287,
+      "previousBalance": 0,
+      "advance": 0,
+      "netPayable": 287,
+      "items": [
+        {
+          "type": "Material",
+          "workDate": "2026-08-01",
+          "workType": "JCB Hire",
+          "qty": 9,
+          "unit": "ton",
+          "rate": 287,
+          "amount": 287,
+          "description": "JCB Hire"
+        }
+      ],
+      "invoiceNo": "INV-0001",
+      "createdAt": "2026-08-01T13:43:38.490Z"
+    },
+    {
+      "customerName": "mayuresh",
+      "customerPhone": "",
+      "siteName": "JCB Hire",
+      "siteAddress": "",
+      "vehicleNo": "",
+      "orderNo": "",
+      "invoiceDate": "2026-08-01",
+      "subtotal": 0,
+      "previousBalance": 0,
+      "advance": 0,
+      "netPayable": 0,
+      "items": [
+        {
+          "type": "Material",
+          "workDate": "2026-08-01",
+          "workType": "JCB Hire",
+          "qty": 2,
+          "unit": "",
+          "rate": 0,
+          "amount": 0,
+          "description": "JCB Hire"
+        }
+      ],
+      "invoiceNo": "INV-0002",
+      "createdAt": "2026-08-01T14:05:01.228Z"
+    },
+    {
+      "customerName": "mayuresh",
+      "customerPhone": "",
+      "siteName": "JCB Hire",
+      "siteAddress": "",
+      "vehicleNo": "",
+      "orderNo": "",
+      "invoiceDate": "2026-08-01",
+      "subtotal": 0,
+      "previousBalance": 0,
+      "advance": 0,
+      "netPayable": 0,
+      "items": [
+        {
+          "type": "Material",
+          "workDate": "2026-08-01",
+          "workType": "JCB Hire",
+          "qty": 2,
+          "unit": "",
+          "rate": 0,
+          "amount": 0,
+          "description": "JCB Hire"
+        }
+      ],
+      "invoiceNo": "INV-0003",
+      "createdAt": "2026-08-01T14:05:05.785Z"
+    }
+  ],
+  "clients": [
+    {
+      "name": "mayuresh mundhe",
+      "company": "sk constructions",
+      "phone": "9260281767",
+      "location": "karjat",
+      "balance": 0,
+      "status": "Active",
+      "lastActivity": "Just now",
+      "id": "CL-001",
+      "createdAt": "2026-08-01T13:39:26.155Z"
+    }
+  ]
+}

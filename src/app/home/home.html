@@ -1,0 +1,123 @@
+<div class="stack">
+  <div>
+    <h1 class="title">Construction Operations Dashboard</h1>
+    <p class="subtitle">Live bill tracking, fleet status, and quick billing tools for your site operations.</p>
+  </div>
+
+  <div class="stats">
+    <div class="card">
+      <div class="card-icon card-icon-1"><i class="fa-solid fa-trowel-bricks"></i></div>
+      <div>
+        <p class="card-label">Active Excavators</p>
+        <p class="card-value">12 / 15</p>
+        <p class="card-note card-note-green">Operating</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon card-icon-2"><i class="fa-solid fa-truck-pickup"></i></div>
+      <div>
+        <p class="card-label">Tipper Trucks En Route</p>
+        <p class="card-value">28</p>
+        <p class="card-note card-note-gray">Trips Today</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon card-icon-3"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+      <div>
+        <p class="card-label">Material Supply Bills</p>
+        <p class="card-value">8</p>
+        <p class="card-note card-note-amber">Pending Approval</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-three">
+    <section class="section">
+      <div class="section-head">Fleet Status Tracker</div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr class="table-head">
+              <th class="table-cell">Asset</th>
+              <th class="table-cell">Type</th>
+              <th class="table-cell">Operator</th>
+              <th class="table-cell">Location</th>
+              <th class="table-cell">Status</th>
+              <th class="table-cell">Logs</th>
+              <th class="table-cell"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-row-hover">
+              <td class="table-cell row-title">JCB-041</td>
+              <td class="table-cell">JCB</td>
+              <td class="table-cell row-muted">Operator</td>
+              <td class="table-cell row-title">Site A - Foundation</td>
+              <td class="table-cell"><span class="status-pill status-active">Active</span></td>
+              <td class="table-cell">14 hrs</td>
+              <td class="table-cell text-center"><i class="fa-solid fa-ellipsis-vertical"></i></td>
+            </tr>
+            <tr class="table-row-hover">
+              <td class="table-cell row-title">TIPPER-118</td>
+              <td class="table-cell">Tipper</td>
+              <td class="table-cell row-muted">Operator</td>
+              <td class="table-cell row-title">Site A - Foundation</td>
+              <td class="table-cell"><span class="status-pill status-idle">Idle</span></td>
+              <td class="table-cell">12 hrs</td>
+              <td class="table-cell text-center"><i class="fa-solid fa-ellipsis-vertical"></i></td>
+            </tr>
+            <tr class="table-row-hover">
+              <td class="table-cell row-title">JCB-041</td>
+              <td class="table-cell">JCB</td>
+              <td class="table-cell row-muted">Operator</td>
+              <td class="table-cell row-title">Site A - Foundation</td>
+              <td class="table-cell"><span class="status-pill status-active">Active</span></td>
+              <td class="table-cell">43 hrs</td>
+              <td class="table-cell text-center"><i class="fa-solid fa-ellipsis-vertical"></i></td>
+            </tr>
+            <tr class="table-row-hover">
+              <td class="table-cell row-title">TIPPER-118</td>
+              <td class="table-cell">Tipper</td>
+              <td class="table-cell row-title">JCB Hire</td>
+              <td class="table-cell row-title">Site A - Foundation</td>
+              <td class="table-cell"><span class="status-pill status-maint">Maintenance</span></td>
+              <td class="table-cell">20 hrs</td>
+              <td class="table-cell text-center"><i class="fa-solid fa-ellipsis-vertical"></i></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">Quick Bill Generator</div>
+      <form class="form" (ngSubmit)="billGen()">
+        <label class="field-label">Asset / Supply Type</label>
+        <select class="select" [(ngModel)]="assetType" name="assetType">
+          <option>Material Supply</option>
+          <option>JCB Hire</option>
+          <option>Tipper Service</option>
+        </select>
+        <label class="field-label">Vendor Name</label>
+        <input type="text" placeholder="Vendor Name" class="input" [(ngModel)]="vendorName" name="vendorName">
+        <label class="field-label">Date</label>
+        <input type="date" class="input" [(ngModel)]="invoiceDate" name="invoiceDate">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="field-label">Material Qty</label>
+            <input type="number" class="input" [(ngModel)]="materialQty" name="materialQty">
+          </div>
+          <div>
+            <label class="field-label">Unit</label>
+            <input type="text" placeholder="Unit" class="input-disabled" [(ngModel)]="unit" name="unit" readonly>
+          </div>
+        </div>
+        <label class="field-label">Total Amount ( inclusive of Tax)</label>
+        <input type="text" [value]="totalAmount" class="input-readonly" readonly>
+        <button type="submit" class="submit" [disabled]="isSubmitting">{{ isSubmitting ? 'Saving...' : 'Create Bill' }}</button>
+        <p class="status">{{ statusMessage }}</p>
+      </form>
+    </section>
+  </div>
+</div>
+

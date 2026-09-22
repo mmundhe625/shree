@@ -1,0 +1,128 @@
+    <div class="stack">
+  <div class="page-head">
+    <div>
+      <h1 class="title">Client Management</h1>
+      <p class="subtitle">Keep customer relationships, payments, and follow-ups organised in one place.</p>
+    </div>
+    <button class="submit" type="button" (click)="addClient()" [disabled]="isSubmitting">+ Add Client</button>
+  </div>
+
+  <div class="stats">
+    <div class="card" *ngFor="let item of summary">
+      <div class="card-icon" [ngClass]="{
+        'card-icon-1': item.tone === 'amber',
+        'card-icon-2': item.tone === 'orange',
+        'card-icon-3': item.tone === 'blue'
+      }">
+        <i [class]="item.icon"></i>
+      </div>
+      <div>
+        <p class="card-label">{{ item.label }}</p>
+        <p class="card-value">{{ item.value }}</p>
+        <p class="card-note" [ngClass]="item.noteClass">{{ item.note }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-three">
+    <section class="section section-wide">
+      <div class="section-head">Client Directory</div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr class="table-head">
+              <th class="table-cell">Client</th>
+              <th class="table-cell">Company</th>
+              <th class="table-cell">Phone</th>
+              <th class="table-cell">Location</th>
+              <th class="table-cell">Balance</th>
+              <th class="table-cell">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-row-hover" *ngFor="let client of clients">
+              <td class="table-cell row-title">{{ client.name }}</td>
+              <td class="table-cell row-muted">{{ client.company }}</td>
+              <td class="table-cell">{{ client.phone }}</td>
+              <td class="table-cell">{{ client.location }}</td>
+              <td class="table-cell row-title">₹{{ client.balance.toLocaleString('en-IN') }}</td>
+              <td class="table-cell">
+                <span class="status-pill" [ngClass]="{
+                  'status-active': client.status === 'Active',
+                  'status-idle': client.status === 'Review',
+                  'status-maint': client.status === 'Pending'
+                }">{{ client.status }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">Client Brief</div>
+      <form class="form" (ngSubmit)="addClient()">
+        <div class="profile-card">
+          <div class="profile-badge"><i class="fa-solid fa-user-check"></i></div>
+          <div>
+            <p class="profile-title">Priority Follow-up</p>
+            <p class="profile-sub">Review pending invoices for high-value clients before the end of the week.</p>
+          </div>
+        </div>
+
+        <label class="field-label">Client Name</label>
+        <input type="text" [(ngModel)]="newClientName" name="newClientName" class="input" placeholder="Client Name">
+
+        <label class="field-label">Company</label>
+        <input type="text" [(ngModel)]="newCompany" name="newCompany" class="input" placeholder="Company Name">
+
+        <label class="field-label">Phone</label>
+        <input type="text" [(ngModel)]="newPhone" name="newPhone" class="input" placeholder="Phone Number">
+
+        <label class="field-label">Location</label>
+        <input type="text" [(ngModel)]="newLocation" name="newLocation" class="input" placeholder="Location">
+
+        <label class="field-label">Opening Balance</label>
+        <input type="number" [(ngModel)]="newBalance" name="newBalance" class="input">
+
+        <button class="submit" type="submit" [disabled]="isSubmitting">{{ isSubmitting ? 'Saving...' : 'Save Client' }}</button>
+        <p class="status">{{ statusMessage }}</p>
+      </form>
+    </section>
+
+    <section class="section2">
+      <div class="profile-card">
+        <div class="profile-badge"><i class="fa-solid fa-user-check"></i></div>
+        <div>
+          <p class="profile-title">Client Updates</p>
+          <p class="profile-sub">Review and update client information as needed.</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr class="table-head">
+              <th class="table-cell">Client</th>
+              <th class="table-cell">Last Activity</th>
+              <th class="table-cell">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-row-hover" *ngFor="let client of clients">
+              <td class="table-cell row-title">{{ client.name }}</td>
+              <td class="table-cell">{{ client.lastActivity }}</td>
+              <td class="table-cell">
+                <span class="status-pill" [ngClass]="{
+                  'status-active': client.status === 'Active',
+                  'status-idle': client.status === 'Review',
+                  'status-maint': client.status === 'Pending'
+                }">{{ client.status }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+  </div>
+</div>

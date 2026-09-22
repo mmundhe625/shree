@@ -1,1 +1,255 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  background-color: #f3f4f6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.root {
+  @apply min-h-screen bg-gray-100;
+}
+
+.layout {
+  @apply flex h-screen overflow-hidden;
+}
+
+.sb {
+  @apply w-16 bg-zinc-800 flex flex-col items-center py-4 justify-between border-r border-zinc-700;
+}
+
+.sb-inner {
+  @apply flex flex-col items-center gap-6 w-full;
+}
+
+.logo {
+  @apply w-10 h-10 bg-red-700 flex items-center justify-center rounded-full text-white font-bold text-xl;
+}
+
+.nav {
+  @apply flex flex-col gap-4 w-full items-center;
+}
+
+.nav-item {
+  @apply p-3 text-zinc-400 hover:text-white rounded-lg transition-colors;
+}
+
+.nav-item-active {
+  @apply p-3 bg-amber-600 text-white rounded-lg transition-colors;
+}
+
+.main-wrap {
+  @apply flex-1 flex flex-col overflow-hidden;
+}
+
+.hd {
+  @apply bg-orange-500 h-14 flex items-center justify-between px-6 shadow-md text-white;
+}
+
+.hd-left,
+.hd-right {
+  @apply flex items-center gap-4;
+}
+
+.hd-right {
+  @apply gap-6;
+}
+
+.btn-icon {
+  @apply text-white text-xl;
+}
+
+.btn-notify {
+  @apply text-white text-xl relative;
+}
+
+.badge {
+  @apply absolute -top-1 -right-1 bg-red-600 w-2 h-2 rounded-full;
+}
+
+.avatar-wrap {
+  @apply flex items-center gap-2;
+}
+
+.avatar {
+  @apply w-8 h-8 rounded-full border border-white object-cover;
+}
+
+.content {
+  @apply flex-1 overflow-y-auto p-6;
+}
+
+.title {
+  @apply text-2xl font-bold text-gray-800 tracking-wide uppercase;
+}
+
+.subtitle {
+  @apply text-sm text-gray-600 mt-1;
+}
+
+.stats {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-4;
+}
+
+.card {
+  @apply bg-white p-4 rounded-3xl shadow-sm border border-gray-200 flex items-center gap-4;
+}
+
+.card-icon {
+  @apply p-3 rounded-2xl text-2xl;
+}
+
+.card-icon-1 {
+  @apply bg-amber-50 text-amber-600;
+}
+
+.card-icon-2 {
+  @apply bg-orange-50 text-orange-600;
+}
+
+.card-icon-3 {
+  @apply bg-amber-50 text-amber-700;
+}
+
+.card-label {
+  @apply text-xs font-semibold text-gray-500 uppercase tracking-wider;
+}
+
+.card-value {
+  @apply text-2xl font-bold text-gray-800;
+}
+
+.card-note {
+  @apply text-xs font-medium;
+}
+
+.card-note-green {
+  @apply text-green-600;
+}
+
+.card-note-gray {
+  @apply text-gray-500;
+}
+
+.card-note-amber {
+  @apply text-amber-600;
+}
+
+.grid-three {
+  @apply grid grid-cols-1 xl:grid-cols-3 gap-6;
+}
+
+.section {
+  @apply bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden;
+}
+
+.section-head {
+  @apply bg-slate-800 text-white px-5 py-4 font-semibold text-sm uppercase tracking-[0.2em];
+}
+
+.table-wrap {
+  @apply overflow-x-auto;
+}
+
+.table {
+  @apply w-full text-left text-xs border-collapse;
+}
+
+.table-head {
+  @apply bg-gray-50 text-gray-500 border-b border-gray-200 uppercase tracking-[0.15em] font-semibold;
+}
+
+.table-row-hover:hover {
+  @apply bg-gray-50;
+}
+
+.table-cell {
+  @apply p-3;
+}
+
+.row-muted {
+  @apply text-gray-500;
+}
+
+.row-title {
+  @apply font-medium text-gray-600;
+}
+
+.status-pill {
+  @apply px-2 py-0.5 rounded-full text-[10px] font-bold text-white;
+}
+
+.status-active {
+  @apply bg-green-600;
+}
+
+.status-idle {
+  @apply bg-amber-500;
+}
+
+.status-maint {
+  @apply bg-blue-600;
+}
+
+.form {
+  @apply p-5 flex flex-col gap-4 text-sm;
+}
+
+.field-label {
+  @apply block text-gray-600 font-medium mb-1;
+}
+
+.input,
+.select,
+.input-disabled,
+.input-readonly {
+  @apply w-full border border-gray-300 rounded-2xl p-3 outline-none;
+}
+
+.input {
+  @apply focus:border-orange-500 focus:ring-2 focus:ring-orange-100;
+}
+
+.select {
+  @apply bg-gray-50 focus:border-orange-500 focus:ring-2 focus:ring-orange-100;
+}
+
+.input-disabled {
+  @apply bg-gray-50;
+}
+
+.input-readonly {
+  @apply bg-gray-100 font-semibold text-gray-700;
+}
+
+.submit {
+  @apply mt-2 w-full bg-orange-500 text-white rounded-2xl py-3 font-semibold hover:bg-orange-600 transition-colors;
+}
+
+.invoice-popup {
+  @apply absolute left-1/2 top-24 w-64 translate-x-4 z-10 bg-white rounded-xl shadow-xl border border-gray-200 p-4 flex flex-col gap-3;
+}
+
+.invoice-text-micro {
+  font-size: 9px;
+}
+
+
+

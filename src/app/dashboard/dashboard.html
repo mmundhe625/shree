@@ -1,0 +1,73 @@
+<div class="dashboard">
+    <div class="page-head">
+        <div>
+            <p class="eyebrow">ShreePrasad / Overview</p>
+            <h1 class="title">Good morning, Mayuresh</h1>
+            <p class="subtitle">A quick read on invoices, collections, and client activity across your sites.</p>
+        </div>
+        <a class="primary-action" routerLink="/home"><i class="fa-solid fa-plus"></i> Create invoice</a>
+    </div>
+
+    <div *ngIf="hasError" class="notice" role="alert">Unable to load the latest figures. Check that the backend is running.</div>
+
+    <div class="stats" *ngIf="!isLoading; else loading">
+        <article class="metric metric-featured">
+            <div class="metric-top"><span>Total invoiced</span><i class="fa-solid fa-chart-line"></i></div>
+            <strong>{{ formatCurrency(totalInvoiced) }}</strong>
+            <small>{{ bills.length }} invoice{{ bills.length === 1 ? '' : 's' }} raised</small>
+        </article>
+        <article class="metric">
+            <div class="metric-top"><span>Pending collection</span><i class="fa-solid fa-clock"></i></div>
+            <strong>{{ formatCurrency(pendingAmount) }}</strong>
+            <small class="warning-text">{{ bills.filter(bill => bill.netPayable > 0).length }} bills need attention</small>
+        </article>
+        <article class="metric">
+            <div class="metric-top"><span>Active clients</span><i class="fa-solid fa-users"></i></div>
+            <strong>{{ activeClients }}</strong>
+            <small>{{ clients.length }} clients in directory</small>
+        </article>
+    </div>
+
+    <ng-template #loading><div class="loading">Loading your operations overview...</div></ng-template>
+
+    <div class="dashboard-grid" *ngIf="!isLoading">
+        <section class="panel invoices-panel">
+            <div class="panel-heading"><div><p class="eyebrow">Latest activity</p><h2>Recent invoices</h2></div><a routerLink="/bills">View all <i class="fa-solid fa-arrow-right"></i></a></div>
+            <div class="invoice-list" *ngIf="bills.length; else noBills">
+                <a class="invoice-row" *ngFor="let bill of bills | slice:0:5" routerLink="/bills">
+                    <span class="invoice-icon"><i class="fa-solid fa-file-invoice"></i></span>
+                    <span class="invoice-main"><strong>{{ bill.invoiceNo }}</strong><small>{{ bill.customerName }} · {{ bill.siteName || 'General work' }}</small></span>
+                    <span class="invoice-date">{{ formatDate(bill.invoiceDate, bill.createdAt) }}</span>
+                    <span class="invoice-amount">{{ formatCurrency(bill.netPayable) }}</span>
+                    <span class="status-pill" [ngClass]="bill.netPayable > 0 ? 'status-idle' : 'status-active'">{{ bill.netPayable > 0 ? 'Pending' : 'Paid' }}</span>
+                </a>
+            </div>
+            <ng-template #noBills><div class="empty-state">No invoices yet. Start with your first bill.</div></ng-template>
+        </section>
+
+        <aside class="panel health-panel">
+            <div class="panel-heading"><div><p class="eyebrow">Financial pulse</p><h2>Collection health</h2></div><i class="fa-solid fa-wallet panel-mark"></i></div>
+            <div class="ring" [style.--rate]="collectionRate + '%'" [attr.aria-label]="collectionRate + '% collected'"><strong>{{ collectionRate }}%</strong><span>collected</span></div>
+            <div class="health-line"><span>Collected</span><strong>{{ formatCurrency(totalInvoiced - pendingAmount) }}</strong></div>
+            <div class="health-line"><span>Outstanding</span><strong>{{ formatCurrency(pendingAmount) }}</strong></div>
+            <a class="secondary-action" routerLink="/bills">Review pending bills <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        </aside>
+
+        <section class="panel clients-panel">
+            <div class="panel-heading"><div><p class="eyebrow">Relationships</p><h2>Client snapshot</h2></div><a routerLink="/client">Manage <i class="fa-solid fa-arrow-right"></i></a></div>
+            <div class="client-row" *ngFor="let client of clients | slice:0:4">
+                <span class="client-avatar">{{ client.name.charAt(0).toUpperCase() }}</span>
+                <span class="invoice-main"><strong>{{ client.name }}</strong><small>{{ client.company }} · {{ client.location }}</small></span>
+                <span class="client-balance">{{ formatCurrency(client.balance) }}</span>
+                <span class="status-pill status-active">{{ client.status }}</span>
+            </div>
+            <div class="empty-state" *ngIf="!clients.length">No clients added yet.</div>
+        </section>
+
+        <section class="next-step">
+            <span class="next-step-icon"><i class="fa-solid fa-bolt"></i></span>
+            <div><p class="eyebrow">Next best action</p><h2>Keep billing moving</h2><p>Add a client or create an invoice while the site details are fresh.</p></div>
+            <div class="next-actions"><a routerLink="/home">New invoice</a><a routerLink="/client">Add client</a></div>
+        </section>
+    </div>
+</div>

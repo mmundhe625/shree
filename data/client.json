@@ -1,0 +1,26 @@
+{
+  "clients": [
+    {
+      "name": "mayuresh mundhe",
+      "company": "sk constructions",
+      "phone": "9260281767",
+      "location": "karjat",
+      "balance": 30,
+      "status": "Active",
+      "lastActivity": "Just now",
+      "id": "CL-001",
+      "createdAt": "2026-08-06T06:35:01.607Z"
+    },
+    {
+      "name": "mayuresh mundhe",
+      "company": "sk constructions",
+      "phone": "9260281767",
+      "location": "karjat",
+      "balance": 12000,
+      "status": "Active",
+      "lastActivity": "Just now",
+      "id": "CL-002",
+      "createdAt": "2026-08-06T06:40:06.455Z"
+    }
+  ]
+}

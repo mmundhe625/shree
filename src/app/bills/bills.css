@@ -1,0 +1,11 @@
+.page-head {
+  @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+}
+
+.section-wide {
+  @apply xl:col-span-2;
+}
+
+.submit {
+  @apply px-4 py-2 rounded-2xl bg-orange-500 text-white font-semibold hover:bg-orange-600 transition-colors;
+}
