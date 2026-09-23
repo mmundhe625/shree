@@ -15,32 +15,14 @@ interface DashboardSummary {
   styleUrl: './home.css',
 })
 export class Home implements OnInit {
-  assetType = 'Aggregate Supply';
+  assetType = 'Material Supply';
+  materialName = '';
   vendorName = '';
   invoiceDate = new Date().toISOString().slice(0, 10);
-  materialQty = '0';
-  unit = '';
+  materialQty = 0;
+  unit = 'ton';
+  rate = 0;
   totalAmount = 0;
-
-  ngOnInit1(): void {
-    if (this.assetType === 'Aggregate Supply') {
-      this.totalAmount = parseFloat(this.materialQty) * 3000; // Assuming a default rate of 3000 for simplicity
-    } else {
-      this.totalAmount = parseFloat(this.materialQty) * 0; // Assuming a default rate of 0 for simplicity
-    }
-  }
-
-  ngOnInit2(): void {
-    if (this.assetType === 'jcb hire') {
-      this.totalAmount = parseFloat(this.materialQty) * 1200; // Assuming a default rate of 1200 for simplicity
-    }
-  }
-
-  ngOnInit3(): void {
-    if (this.assetType === 'Truck Hire') {
-      this.totalAmount = parseFloat(this.materialQty) * 1000; // Assuming a default rate of 1000 for simplicity
-    }
-  }
 
   statusMessage = '';
   isSubmitting = false;
@@ -49,7 +31,34 @@ export class Home implements OnInit {
   constructor(private readonly api: ApiService) {}
 
   ngOnInit(): void {
+    this.updateRateForAsset();
+    this.calculateTotal();
     void this.loadSummary();
+  }
+
+  updateRateForAsset(): void {
+    const defaultRates: Record<string, number> = {
+      'Material Supply': 0,
+      'JCB Hire': 1200,
+      'Tipper Service': 1000,
+    };
+    const defaultUnits: Record<string, string> = {
+      'Material Supply': 'ton',
+      'JCB Hire': 'hrs',
+      'Tipper Service': 'hrs',
+    };
+    this.rate = defaultRates[this.assetType] ?? 0;
+    this.unit = defaultUnits[this.assetType] ?? '';
+    if (this.assetType !== 'Material Supply') {
+      this.materialName = '';
+    }
+    this.calculateTotal();
+  }
+
+  calculateTotal(): void {
+    const quantity = Number(this.materialQty) || 0;
+    const rate = Number(this.rate) || 0;
+    this.totalAmount = Math.max(0, quantity * rate);
   }
 
   async loadSummary(): Promise<void> {
@@ -61,6 +70,11 @@ export class Home implements OnInit {
   }
 
   async billGen(): Promise<void> {
+    if (this.assetType === 'Material Supply' && !this.materialName.trim()) {
+      this.statusMessage = 'Please enter a material name.';
+      return;
+    }
+
     this.isSubmitting = true;
     this.statusMessage = 'Sending invoice to backend...';
 
@@ -84,9 +98,10 @@ export class Home implements OnInit {
             workType: this.assetType,
             qty: this.materialQty,
             unit: this.unit,
-            rate: this.totalAmount,
+            rate: this.rate,
             amount: this.totalAmount,
-            description: this.assetType,
+            description: this.assetType === 'Material Supply' ? this.materialName.trim() : this.assetType,
+            materialName: this.assetType === 'Material Supply' ? this.materialName.trim() : '',
           },
         ],
       };

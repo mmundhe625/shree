@@ -12,6 +12,27 @@ ng serve
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
+## Django backend
+
+The API is implemented in Django and uses MySQL. Create the `client_db` database in MySQL, set the `MYSQL_*` variables from `.env.example`, then install the dependencies and create the database tables:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python manage.py migrate
+```
+
+The Django database connection uses `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE`. Make sure the MySQL server is running before starting Django.
+
+Start Django and Angular together:
+
+```powershell
+npm start
+```
+
+Angular proxies `/api` requests to Django at `http://127.0.0.1:8000`, so the browser continues to use the same API URLs. Set `DJANGO_ALLOWED_HOSTS` as a comma-separated list when deploying Django outside local development.
+
 ## Code scaffolding
 
 Angular CLI includes powerful code scaffolding tools. To generate a new component, run:

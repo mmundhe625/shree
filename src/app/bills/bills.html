@@ -7,7 +7,12 @@
     <button class="submit" type="button" [routerLink]="['/home']">+ Create Invoice</button>
   </div>
 
-  <div class="stats">
+  <div class="notice notice-error" *ngIf="errorMessage()" role="alert">
+    {{ errorMessage() }}
+    <button type="button" class="retry" (click)="loadBills()">Retry</button>
+  </div>
+
+  <div class="stats" *ngIf="!isLoading()">
     <div class="card" *ngFor="let item of summary">
       <div class="card-icon card-icon-1"><i class="fa-solid fa-file-invoice-dollar"></i></div>
       <div>
@@ -18,7 +23,9 @@
     </div>
   </div>
 
-  <div class="grid-three">
+  <div class="loading" *ngIf="isLoading()">Loading bills...</div>
+
+  <div class="grid-three" *ngIf="!isLoading()">
     <section class="section section-wide">
       <div class="section-head">Recent Bills</div>
       <div class="table-wrap">
@@ -27,47 +34,39 @@
             <tr class="table-head">
               <th class="table-cell">Invoice</th>
               <th class="table-cell">Client</th>
-              <th class="table-cell">Amount</th>
-              <th class="table-cell">Due Date</th>
+              <th class="table-cell">Outstanding</th>
+              <th class="table-cell">Invoice Date</th>
               <th class="table-cell">Status</th>
+              <th class="table-cell">Action</th>
             </tr>
           </thead>
           <tbody>
             <tr class="table-row-hover" *ngFor="let bill of bills">
               <td class="table-cell row-title">{{ bill.id }}</td>
               <td class="table-cell row-muted">{{ bill.client }}</td>
-              <td class="table-cell row-title">{{ bill.amount }}</td>
-              <td class="table-cell">{{ bill.due }}</td>
+              <td class="table-cell row-title">{{ formatCurrency(bill.outstanding) }}</td>
+              <td class="table-cell">{{ bill.date }}</td>
               <td class="table-cell">
                 <span class="status-pill" [ngClass]="{
                   'status-active': bill.status === 'Paid',
-                  'status-idle': bill.status === 'Pending',
-                  'status-maint': bill.status === 'Overdue'
+                  'status-idle': bill.status === 'Unpaid',
+                  'status-maint': bill.status === 'Half-paid'
                 }">{{ bill.status }}</span>
               </td>
+              <td class="table-cell"><button class="table-action" type="button" *ngIf="bill.status !== 'Paid'" [disabled]="!!payingInvoice()" (click)="markPaid(bill)">{{ payingInvoice() === bill.id ? 'Saving...' : 'Mark paid' }}</button><span class="paid-label" *ngIf="bill.status === 'Paid'">Complete</span></td>
             </tr>
+            <tr *ngIf="!bills.length"><td class="empty-cell" colspan="6">No bills found. Create an invoice to see it here.</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
     <section class="section">
-      <div class="section-head">Billing Notes</div>
-      <div class="form">
-        <label class="field-label">Payment Method</label>
-        <select class="select">
-          <option>Bank Transfer</option>
-          <option>UPI</option>
-          <option>Cash</option>
-        </select>
-
-        <label class="field-label">Reference Number</label>
-        <input type="text" placeholder="Enter reference" class="input">
-
-        <label class="field-label">Reminder Date</label>
-        <input type="date" class="input">
-
-        <button class="submit">Save Reminder</button>
+      <div class="section-head">Payment overview</div>
+      <div class="payment-overview">
+        <i class="fa-solid fa-circle-check"></i>
+        <strong>Keep payments up to date</strong>
+        <p>Use “Mark paid” after receiving a payment. Pending totals and the dashboard outstanding list update automatically.</p>
       </div>
     </section>
   </div>

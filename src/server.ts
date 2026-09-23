@@ -6,7 +6,7 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { createPool, type Pool } from 'mysql2/promise';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import {
   createBill,
   createClient,
@@ -14,8 +14,10 @@ import {
   getDashboardSummary,
   loadClientStore,
   loadStore,
+  type BillItem,
   type ClientPayload,
 } from './backend-store';
+import { saveInvoicePdf } from './invoice-pdf';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -29,6 +31,23 @@ interface ClientRow {
   status: string;
   lastActivity: string;
   createdAt?: string;
+}
+
+interface BillRow {
+  invoiceNo: string;
+  customerName: string;
+  customerPhone?: string;
+  siteName?: string;
+  siteAddress?: string;
+  vehicleNo?: string;
+  orderNo?: string;
+  invoiceDate?: string;
+  subtotal: number;
+  previousBalance?: number;
+  advance?: number;
+  netPayable: number;
+  items: BillItem[];
+  createdAt: string;
 }
 
 const app = express();
@@ -55,6 +74,37 @@ async function getMysqlPool(): Promise<Pool | null> {
 
     const connection = await mysqlPool.getConnection();
     connection.release();
+    await mysqlPool.query(`
+      CREATE TABLE IF NOT EXISTS clients (
+        id VARCHAR(32) PRIMARY KEY,
+        name VARCHAR(160) NOT NULL,
+        company VARCHAR(160) NOT NULL,
+        phone VARCHAR(40) NOT NULL DEFAULT '',
+        location VARCHAR(160) NOT NULL DEFAULT '',
+        balance DECIMAL(12, 2) NOT NULL DEFAULT 0,
+        status VARCHAR(40) NOT NULL DEFAULT 'Active',
+        lastActivity VARCHAR(80) NOT NULL DEFAULT '',
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await mysqlPool.query(`
+      CREATE TABLE IF NOT EXISTS bills (
+        invoiceNo VARCHAR(32) PRIMARY KEY,
+        customerName VARCHAR(160) NOT NULL,
+        customerPhone VARCHAR(40) NOT NULL DEFAULT '',
+        siteName VARCHAR(160) NOT NULL DEFAULT '',
+        siteAddress VARCHAR(255) NOT NULL DEFAULT '',
+        vehicleNo VARCHAR(80) NOT NULL DEFAULT '',
+        orderNo VARCHAR(80) NOT NULL DEFAULT '',
+        invoiceDate VARCHAR(32) NOT NULL,
+        subtotal DECIMAL(12, 2) NOT NULL DEFAULT 0,
+        previousBalance DECIMAL(12, 2) NOT NULL DEFAULT 0,
+        advance DECIMAL(12, 2) NOT NULL DEFAULT 0,
+        netPayable DECIMAL(12, 2) NOT NULL DEFAULT 0,
+        items JSON NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
     return mysqlPool;
   } catch {
     mysqlPool = null;
@@ -83,19 +133,58 @@ async function writeClientToDb(payload: ClientPayload): Promise<ClientRow> {
   }
 
   try {
+    const id = `CL-${Date.now()}`;
     const [result] = await pool.query(
-      'INSERT INTO clients (name, company, phone, location, balance, status, lastActivity, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())',
-      [payload.name, payload.company, payload.phone, payload.location, payload.balance, payload.status, payload.lastActivity],
+      'INSERT INTO clients (id, name, company, phone, location, balance, status, lastActivity, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())',
+      [id, payload.name, payload.company, payload.phone, payload.location, payload.balance, payload.status, payload.lastActivity],
     );
 
-    const insertId = typeof result === 'object' && result !== null && 'insertId' in result ? Number((result as { insertId?: number }).insertId) : undefined;
     return {
-      id: insertId ? `CL-${insertId}` : `CL-${Date.now()}`,
+      id,
       ...payload,
       createdAt: new Date().toISOString(),
     };
   } catch {
     return createClientEntry(undefined, payload) as ClientRow;
+  }
+}
+
+async function readBillsFromDb(): Promise<BillRow[]> {
+  const pool = await getMysqlPool();
+  if (!pool) {
+    return loadStore().bills;
+  }
+
+  try {
+    const [rows] = await pool.query('SELECT invoiceNo, customerName, customerPhone, siteName, siteAddress, vehicleNo, orderNo, invoiceDate, subtotal, previousBalance, advance, netPayable, items, createdAt FROM bills ORDER BY createdAt DESC');
+    return (Array.isArray(rows) ? rows : []) as BillRow[];
+  } catch {
+    return loadStore().bills;
+  }
+}
+
+async function writeBillToDb(payload: Omit<BillRow, 'invoiceNo' | 'createdAt'>): Promise<BillRow> {
+  const pool = await getMysqlPool();
+  if (!pool) {
+    return createBill(undefined, payload as Parameters<typeof createBill>[1]);
+  }
+
+  try {
+    const [rows] = await pool.query('SELECT invoiceNo FROM bills ORDER BY createdAt DESC LIMIT 1');
+    const lastInvoice = Array.isArray(rows) && rows.length ? String((rows[0] as { invoiceNo: string }).invoiceNo) : '';
+    const lastNumber = Number(lastInvoice.replace(/^INV-/, '')) || 0;
+    const bill: BillRow = {
+      ...payload,
+      invoiceNo: `INV-${String(lastNumber + 1).padStart(4, '0')}`,
+      createdAt: new Date().toISOString(),
+    };
+    await pool.query(
+      'INSERT INTO bills (invoiceNo, customerName, customerPhone, siteName, siteAddress, vehicleNo, orderNo, invoiceDate, subtotal, previousBalance, advance, netPayable, items) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [bill.invoiceNo, bill.customerName, bill.customerPhone || '', bill.siteName || '', bill.siteAddress || '', bill.vehicleNo || '', bill.orderNo || '', bill.invoiceDate || '', bill.subtotal, bill.previousBalance || 0, bill.advance || 0, bill.netPayable, JSON.stringify(bill.items || [])],
+    );
+    return bill;
+  } catch {
+    return createBill(undefined, payload as Parameters<typeof createBill>[1]);
   }
 }
 
@@ -105,17 +194,23 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true, message: 'Backend is running' });
 });
 
-app.get('/api/dashboard', (_req, res) => {
-  res.json(getDashboardSummary());
+app.get('/api/dashboard', async (_req, res) => {
+  const bills = await readBillsFromDb();
+  const clients = await readClientsFromDb();
+  res.json({
+    totalBills: bills.length,
+    totalClients: clients.length,
+    pendingBills: bills.filter((bill) => bill.netPayable > 0).length,
+  });
 });
 
-app.get('/api/bills', (_req, res) => {
-  res.json(loadStore().bills);
+app.get('/api/bills', async (_req, res) => {
+  res.json(await readBillsFromDb());
 });
 
-app.post('/api/bills', (req, res) => {
+app.post('/api/bills', async (req, res) => {
   try {
-    const bill = createBill(undefined, {
+    const bill = await writeBillToDb({
       customerName: req.body.customerName || 'Walk-in Customer',
       customerPhone: req.body.customerPhone || '',
       siteName: req.body.siteName || 'Material Supply',
@@ -130,7 +225,11 @@ app.post('/api/bills', (req, res) => {
       items: req.body.items || [],
     });
 
-    res.status(201).json(bill);
+    const pdfPath = await saveInvoicePdf(bill);
+    res.status(201).json({
+      ...bill,
+      pdfPath: relative(process.cwd(), pdfPath).replaceAll('\\', '/'),
+    });
   } catch (error) {
     res.status(500).json({ error: error instanceof Error ? error.message : 'Unable to save bill' });
   }

@@ -4,10 +4,14 @@
       <h1 class="title">Client Management</h1>
       <p class="subtitle">Keep customer relationships, payments, and follow-ups organised in one place.</p>
     </div>
-    <button class="submit" type="button" (click)="addClient()" [disabled]="isSubmitting">+ Add Client</button>
+    <button class="submit" type="button" (click)="addClient()" [disabled]="isSubmitting()">+ Add Client</button>
   </div>
 
-  <div class="stats">
+  <div class="notice notice-error" *ngIf="errorMessage()" role="alert">
+    {{ errorMessage() }} <button type="button" class="retry" (click)="loadClients()">Retry</button>
+  </div>
+
+  <div class="stats" *ngIf="!isLoading()">
     <div class="card" *ngFor="let item of summary">
       <div class="card-icon" [ngClass]="{
         'card-icon-1': item.tone === 'amber',
@@ -24,7 +28,9 @@
     </div>
   </div>
 
-  <div class="grid-three">
+  <div class="loading" *ngIf="isLoading()">Loading clients...</div>
+
+  <div class="grid-three" *ngIf="!isLoading()">
     <section class="section section-wide">
       <div class="section-head">Client Directory</div>
       <div class="table-wrap">
@@ -54,6 +60,7 @@
                 }">{{ client.status }}</span>
               </td>
             </tr>
+            <tr *ngIf="!clients.length"><td class="empty-cell" colspan="6">No clients found. Add your first client using the form.</td></tr>
           </tbody>
         </table>
       </div>
@@ -82,11 +89,8 @@
         <label class="field-label">Location</label>
         <input type="text" [(ngModel)]="newLocation" name="newLocation" class="input" placeholder="Location">
 
-        <label class="field-label">Opening Balance</label>
-        <input type="number" [(ngModel)]="newBalance" name="newBalance" class="input">
-
-        <button class="submit" type="submit" [disabled]="isSubmitting">{{ isSubmitting ? 'Saving...' : 'Save Client' }}</button>
-        <p class="status">{{ statusMessage }}</p>
+        <button class="submit" type="submit" [disabled]="isSubmitting()">{{ isSubmitting() ? 'Saving...' : 'Save Client' }}</button>
+        <p class="status" *ngIf="statusMessage()">{{ statusMessage() }}</p>
       </form>
     </section>
 
@@ -119,6 +123,7 @@
                 }">{{ client.status }}</span>
               </td>
             </tr>
+            <tr *ngIf="!clients.length"><td class="empty-cell" colspan="3">No client updates yet.</td></tr>
           </tbody>
         </table>
       </div>

@@ -25,3 +25,8 @@
   @apply w-full border-collapse;
 }
 
+.loading, .notice { @apply rounded-xl p-5 text-sm; }
+.notice-error { @apply mb-4 border border-red-200 bg-red-50 text-red-700; }
+.retry { @apply font-semibold underline; }
+.empty-cell { @apply px-5 py-10 text-center text-sm text-slate-500; }
+

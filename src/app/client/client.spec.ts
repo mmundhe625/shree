@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
 
 import { Client } from './client';
 import { ApiService } from '../shared/api.service';
@@ -7,25 +8,25 @@ describe('Client', () => {
   let component: Client;
   let fixture: ComponentFixture<Client>;
   let apiService: {
-    get: jasmine.Spy;
-    post: jasmine.Spy;
+    get: ReturnType<typeof vi.fn>;
+    post: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(async () => {
     let storedClients: Array<Record<string, unknown>> = [];
 
     apiService = {
-      get: jasmine.createSpy('get').and.callFake(async () => storedClients),
-      post: jasmine.createSpy('post').and.callFake(async (_path: string, payload: Record<string, unknown>) => {
+      get: vi.fn(async () => storedClients),
+      post: vi.fn(async (_path: string, payload: Record<string, unknown>) => {
         storedClients = [{
           id: 'CL-001',
-          name: payload.name,
-          company: payload.company,
-          phone: payload.phone,
-          location: payload.location,
-          balance: payload.balance,
-          status: payload.status,
-          lastActivity: payload.lastActivity,
+          name: payload['name'],
+          company: payload['company'],
+          phone: payload['phone'],
+          location: payload['location'],
+          balance: payload['balance'],
+          status: payload['status'],
+          lastActivity: payload['lastActivity'],
         }];
         return storedClients[0];
       }),

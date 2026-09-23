@@ -93,25 +93,38 @@
       <div class="section-head">Quick Bill Generator</div>
       <form class="form" (ngSubmit)="billGen()">
         <label class="field-label">Asset / Supply Type</label>
-        <select class="select" [(ngModel)]="assetType" name="assetType">
+        <select class="select" [(ngModel)]="assetType" (ngModelChange)="updateRateForAsset()" name="assetType">
           <option>Material Supply</option>
           <option>JCB Hire</option>
           <option>Tipper Service</option>
         </select>
+        @if (assetType === 'Material Supply') {
+          <label class="field-label" for="materialName">Material Name</label>
+          <input id="materialName" type="text" class="input" placeholder="e.g. River Sand" [(ngModel)]="materialName" name="materialName">
+        }
         <label class="field-label">Vendor Name</label>
         <input type="text" placeholder="Vendor Name" class="input" [(ngModel)]="vendorName" name="vendorName">
         <label class="field-label">Date</label>
         <input type="date" class="input" [(ngModel)]="invoiceDate" name="invoiceDate">
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="field-label">Material Qty</label>
-            <input type="number" class="input" [(ngModel)]="materialQty" name="materialQty">
+            <label class="field-label">Quantity</label>
+            <input type="number" min="0" class="input" [(ngModel)]="materialQty" (ngModelChange)="calculateTotal()" name="materialQty">
           </div>
           <div>
-            <label class="field-label">Unit</label>
-            <input type="text" placeholder="Unit" class="input-disabled" [(ngModel)]="unit" name="unit" readonly>
+            <label class="field-label">Rate per {{ unit }}</label>
+            <input type="number" min="0" class="input" placeholder="Enter rate" [(ngModel)]="rate" (ngModelChange)="calculateTotal()" name="rate">
           </div>
         </div>
+        <label class="field-label">Unit</label>
+        @if (assetType === 'Material Supply') {
+          <select class="select" [(ngModel)]="unit" name="unit">
+            <option value="brass">Brass</option>
+            <option value="ton">Ton</option>
+          </select>
+        } @else {
+          <input type="text" class="input-disabled" [(ngModel)]="unit" name="unit" readonly>
+        }
         <label class="field-label">Total Amount ( inclusive of Tax)</label>
         <input type="text" [value]="totalAmount" class="input-readonly" readonly>
         <button type="submit" class="submit" [disabled]="isSubmitting">{{ isSubmitting ? 'Saving...' : 'Create Bill' }}</button>

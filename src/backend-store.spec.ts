@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createBill, createClient, loadStore, saveStore } from './backend-store';
+import { saveInvoicePdf } from './invoice-pdf';
 
 describe('backend store', () => {
   it('creates bills and clients and persists them', () => {
@@ -38,5 +39,27 @@ describe('backend store', () => {
 
     saveStore(dataFile, stored);
     rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  it('saves an invoice PDF inside its date folder', async () => {
+    const tempDir = mkdtempSync(join(tmpdir(), 'shree-prasad-invoice-'));
+    const dataFile = join(tempDir, 'data.json');
+
+    try {
+      const invoice = createBill(dataFile, {
+        customerName: 'Asha Builders',
+        invoiceDate: '2026-09-23',
+        subtotal: 2500,
+        netPayable: 2500,
+        items: [{ description: 'Sand', qty: 10, unit: 'ton', rate: 250, amount: 2500 }],
+      });
+      const pdfPath = await saveInvoicePdf(invoice, join(tempDir, 'invoices'));
+
+      expect(pdfPath).toBe(join(tempDir, 'invoices', '2026-09-23', 'INV-0001.pdf'));
+      expect(existsSync(pdfPath)).toBe(true);
+      expect(statSync(pdfPath).size).toBeGreaterThan(0);
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 });

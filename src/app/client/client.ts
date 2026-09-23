@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { afterNextRender, Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../shared/api.service';
 
@@ -20,7 +20,7 @@ interface ClientRecord {
   templateUrl: './client.html',
   styleUrl: './client.css',
 })
-export class Client implements OnInit {
+export class Client {
   summary = [
     {
       label: 'Active Clients',
@@ -54,16 +54,18 @@ export class Client implements OnInit {
   newPhone = '';
   newLocation = '';
   newBalance = 0;
-  statusMessage = '';
-  isSubmitting = false;
+  statusMessage = signal('');
+  isSubmitting = signal(false);
+  isLoading = signal(true);
+  errorMessage = signal('');
 
-  constructor(private readonly api: ApiService) {}
-
-  ngOnInit(): void {
-    void this.loadClients();
+  constructor(private readonly api: ApiService) {
+    afterNextRender(() => void this.loadClients());
   }
 
   async loadClients(): Promise<void> {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
     try {
       const data = await this.api.get<ClientRecord[]>('/clients');
       this.clients = data;
@@ -72,17 +74,20 @@ export class Client implements OnInit {
       this.summary[2].value = `₹${data.reduce((total, client) => total + client.balance, 0).toLocaleString('en-IN')}`;
     } catch {
       this.clients = [];
+      this.errorMessage.set('Unable to load clients. Check that the backend is running.');
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
   async addClient(): Promise<void> {
     if (!this.newClientName.trim()) {
-      this.statusMessage = 'Please enter a client name.';
+      this.statusMessage.set('Please enter a client name.');
       return;
     }
 
-    this.isSubmitting = true;
-    this.statusMessage = 'Saving client to database...';
+    this.isSubmitting.set(true);
+    this.statusMessage.set('Saving client to database...');
     try {
       const payload = {
         name: this.newClientName.trim(),
@@ -97,16 +102,20 @@ export class Client implements OnInit {
       await this.api.post<ClientRecord, typeof payload>('/clients', payload);
       await this.loadClients();
 
-      this.statusMessage = 'Client saved successfully.';
-      this.newClientName = '';
-      this.newCompany = '';
-      this.newPhone = '';
-      this.newLocation = '';
-      this.newBalance = 0;
+      this.statusMessage.set('Client saved successfully.');
+      this.clearForm();
     } catch (error) {
-      this.statusMessage = error instanceof Error ? error.message : 'Unable to save client';
+      this.statusMessage.set(error instanceof Error ? error.message : 'Unable to save client');
     } finally {
-      this.isSubmitting = false;
+      this.isSubmitting.set(false);
     }
+  }
+
+  clearForm(): void {
+    this.newClientName = '';
+    this.newCompany = '';
+    this.newPhone = '';
+    this.newLocation = '';
+    this.newBalance = 0;
   }
 }
