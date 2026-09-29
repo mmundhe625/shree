@@ -14,6 +14,7 @@
 .notice-error { @apply mb-4 border border-red-200 bg-red-50 text-red-700; }
 .retry { @apply ml-3 font-semibold underline; }
 .table-action { @apply rounded-lg bg-orange-500 px-3 py-2 text-xs font-semibold text-white hover:bg-orange-600 disabled:cursor-wait disabled:opacity-60; }
+.action-cell { @apply flex flex-wrap gap-2; }
 .paid-label { @apply text-xs font-semibold text-emerald-700; }
 .empty-cell { @apply px-5 py-10 text-center text-sm text-slate-500; }
 .payment-overview { @apply flex flex-col items-start gap-3 p-6 text-sm text-slate-600; }

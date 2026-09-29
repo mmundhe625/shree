@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from api.models import Bill, Client
 from api.invoice_pdf import save_invoice_pdf
 
+
 BillModel = cast(Any, Bill)
 ClientModel = cast(Any, Client)
 
@@ -33,7 +34,7 @@ def _client_json(client):
 
 
 def _bill_json(bill):
-    return {'invoiceNo': bill.invoice_no, 'customerName': bill.customer_name, 'customerPhone': bill.customer_phone, 'siteName': bill.site_name, 'siteAddress': bill.site_address, 'vehicleNo': bill.vehicle_no, 'orderNo': bill.order_no, 'invoiceDate': bill.invoice_date, 'subtotal': float(bill.subtotal), 'previousBalance': float(bill.previous_balance), 'advance': float(bill.advance), 'netPayable': float(bill.net_payable), 'items': bill.items, 'createdAt': bill.created_at.isoformat()}
+    return {'invoiceNo': bill.invoice_no, 'customerName': bill.customer_name, 'customerPhone': bill.customer_phone, 'siteName': bill.site_name, 'siteAddress': bill.site_address, 'vehicleNo': bill.vehicle_no, 'orderNo': bill.order_no, 'invoiceDate': bill.invoice_date, 'subtotal': float(bill.subtotal), 'previousBalance': float(bill.previous_balance), 'advance': float(bill.advance), 'netPayable': float(bill.net_payable), 'approvalStatus': bill.approval_status, 'items': bill.items, 'createdAt': bill.created_at.isoformat()}
 
 
 def health(_request):
@@ -41,7 +42,7 @@ def health(_request):
 
 
 def dashboard(_request):
-    return JsonResponse({'totalBills': BillModel.objects.count(), 'totalClients': ClientModel.objects.count(), 'pendingBills': BillModel.objects.filter(net_payable__gt=0).count()})
+    return JsonResponse({'totalBills': BillModel.objects.count(), 'totalClients': ClientModel.objects.count(), 'pendingBills': BillModel.objects.filter(net_payable__gt=0).count(), 'pendingApprovals': BillModel.objects.filter(approval_status='Pending').count()})
 
 
 @csrf_exempt
@@ -80,4 +81,17 @@ def pay_bill(request, invoice_no):
         return JsonResponse({'error': 'Bill not found'}, status=404)
     bill.net_payable = Decimal('0')
     bill.save(update_fields=['net_payable'])
+    return JsonResponse(_bill_json(bill))
+
+
+@csrf_exempt
+def approve_bill(request, invoice_no):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    try:
+        bill = BillModel.objects.get(invoice_no=invoice_no)
+    except BillModel.DoesNotExist:
+        return JsonResponse({'error': 'Bill not found'}, status=404)
+    bill.approval_status = 'Approved'
+    bill.save(update_fields=['approval_status'])
     return JsonResponse(_bill_json(bill))

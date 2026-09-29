@@ -1,4 +1,4 @@
-<div class="root">
+<div class="root" [class.dark-mode]="darkMode()">
   <div class="layout">
     <aside class="sb">
       <div class="sb-inner">
@@ -26,6 +26,9 @@
         </div>
 
         <div class="hd-right">
+          <button class="btn-icon theme-toggle" type="button" (click)="toggleTheme()" [attr.aria-label]="darkMode() ? 'Switch to light mode' : 'Switch to dark mode'" [attr.title]="darkMode() ? 'Switch to light mode' : 'Switch to dark mode'" [attr.aria-pressed]="darkMode()">
+            <i class="fa-solid" [class.fa-sun]="darkMode()" [class.fa-moon]="!darkMode()"></i>
+          </button>
           <button class="btn-icon"><i class="fa-solid fa-grid-3x3-gap"></i></button>
           <button class="btn-notify">
             <i class="fa-solid fa-bell"></i>

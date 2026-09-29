@@ -37,6 +37,7 @@
               <th class="table-cell">Outstanding</th>
               <th class="table-cell">Invoice Date</th>
               <th class="table-cell">Status</th>
+              <th class="table-cell">Approval</th>
               <th class="table-cell">Action</th>
             </tr>
           </thead>
@@ -53,9 +54,10 @@
                   'status-maint': bill.status === 'Half-paid'
                 }">{{ bill.status }}</span>
               </td>
-              <td class="table-cell"><button class="table-action" type="button" *ngIf="bill.status !== 'Paid'" [disabled]="!!payingInvoice()" (click)="markPaid(bill)">{{ payingInvoice() === bill.id ? 'Saving...' : 'Mark paid' }}</button><span class="paid-label" *ngIf="bill.status === 'Paid'">Complete</span></td>
+              <td class="table-cell"><span class="status-pill" [ngClass]="bill.approvalStatus === 'Approved' ? 'status-active' : 'status-idle'">{{ bill.approvalStatus }}</span></td>
+              <td class="table-cell action-cell"><button class="table-action" type="button" *ngIf="bill.approvalStatus === 'Pending'" [disabled]="!!approvingInvoice()" (click)="approveBill(bill)">{{ approvingInvoice() === bill.id ? 'Approving...' : 'Approve' }}</button><button class="table-action" type="button" *ngIf="bill.status !== 'Paid'" [disabled]="!!payingInvoice()" (click)="markPaid(bill)">{{ payingInvoice() === bill.id ? 'Saving...' : 'Mark paid' }}</button><span class="paid-label" *ngIf="bill.approvalStatus === 'Approved' && bill.status === 'Paid'">Complete</span></td>
             </tr>
-            <tr *ngIf="!bills.length"><td class="empty-cell" colspan="6">No bills found. Create an invoice to see it here.</td></tr>
+            <tr *ngIf="!bills.length"><td class="empty-cell" colspan="7">No bills found. Create an invoice to see it here.</td></tr>
           </tbody>
         </table>
       </div>

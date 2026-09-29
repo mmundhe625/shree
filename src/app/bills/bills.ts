@@ -9,6 +9,7 @@ interface BillRecord {
   subtotal?: number;
   previousBalance?: number;
   netPayable: number;
+  approvalStatus: 'Pending' | 'Approved';
   invoiceDate?: string;
   createdAt: string;
 }
@@ -20,6 +21,7 @@ interface BillRow {
   outstanding: number;
   date: string;
   status: 'Paid' | 'Half-paid' | 'Unpaid';
+  approvalStatus: 'Pending' | 'Approved';
 }
 
 @Component({
@@ -33,6 +35,7 @@ export class Bills {
   isLoading = signal(true);
   errorMessage = signal('');
   payingInvoice = signal('');
+  approvingInvoice = signal('');
 
   summary = [
     { label: 'Total Invoiced', value: '₹0', note: 'This month' },
@@ -56,6 +59,7 @@ export class Bills {
         outstanding: Math.max(0, bill.netPayable),
         date: bill.invoiceDate || new Date(bill.createdAt).toLocaleDateString('en-IN'),
         status: this.statusFor(bill),
+        approvalStatus: bill.approvalStatus,
       }));
 
       const total = this.totalInvoiced(data);
@@ -84,6 +88,19 @@ export class Bills {
       this.errorMessage.set(`Unable to mark ${bill.id} as paid.`);
     } finally {
       this.payingInvoice.set('');
+    }
+  }
+
+  async approveBill(bill: BillRow): Promise<void> {
+    this.approvingInvoice.set(bill.id);
+    this.errorMessage.set('');
+    try {
+      await this.api.post(`/bills/${encodeURIComponent(bill.id)}/approve`, {});
+      await this.loadBills();
+    } catch {
+      this.errorMessage.set(`Unable to approve ${bill.id}.`);
+    } finally {
+      this.approvingInvoice.set('');
     }
   }
 

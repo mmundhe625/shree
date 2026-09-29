@@ -6,6 +6,7 @@ interface DashboardSummary {
   totalBills: number;
   totalClients: number;
   pendingBills: number;
+  pendingApprovals: number;
 }
 
 @Component({
@@ -65,7 +66,7 @@ export class Home implements OnInit {
     try {
       this.summary = await this.api.get<DashboardSummary>('/dashboard');
     } catch {
-      this.summary = { totalBills: 0, totalClients: 0, pendingBills: 0 };
+      this.summary = { totalBills: 0, totalClients: 0, pendingBills: 0, pendingApprovals: 0 };
     }
   }
 

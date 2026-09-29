@@ -251,5 +251,223 @@ body {
   font-size: 9px;
 }
 
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  transition: background-color 160ms ease;
+}
+
+.theme-toggle:hover {
+  background: rgb(255 255 255 / 16%);
+}
+
+.dark-mode {
+  color-scheme: dark;
+  color: #e5e7eb;
+  background-color: #171a1d;
+}
+
+.dark-mode .root,
+.dark-mode .content {
+  background-color: #171a1d;
+}
+
+.dark-mode .title,
+.dark-mode .card-value,
+.dark-mode .row-title,
+.dark-mode .field-label,
+.dark-mode .profile-title {
+  color: #e5e7eb;
+}
+
+.dark-mode .subtitle,
+.dark-mode .card-label,
+.dark-mode .row-muted,
+.dark-mode .profile-sub {
+  color: #a1aab4;
+}
+
+.dark-mode .card,
+.dark-mode .section,
+.dark-mode .section2,
+.dark-mode .invoice-popup,
+.dark-mode .metric:not(.metric-featured),
+.dark-mode .chart-panel,
+.dark-mode .panel,
+.dark-mode .next-step {
+  color: #e5e7eb;
+  background-color: #22272b;
+  border-color: #373e44;
+}
+
+.dark-mode .table-head,
+.dark-mode .table-row-hover:hover,
+.dark-mode .input-disabled,
+.dark-mode .select {
+  background-color: #292f34;
+}
+
+.dark-mode .table-head {
+  color: #a1aab4;
+  border-color: #373e44;
+}
+
+.dark-mode .table-row-hover,
+.dark-mode .table-cell,
+.dark-mode .form,
+.dark-mode .payment-overview,
+.dark-mode .chart-heading,
+.dark-mode .invoice-row,
+.dark-mode .client-row,
+.dark-mode .outstanding-row,
+.dark-mode .panel-heading,
+.dark-mode .legend-row,
+.dark-mode .client-outstanding {
+  border-color: #373e44;
+}
+
+.dark-mode .input,
+.dark-mode .select,
+.dark-mode .input-disabled,
+.dark-mode .input-readonly,
+.dark-mode .checkmark {
+  color: #e5e7eb;
+  background-color: #292f34;
+  border-color: #454d54;
+}
+
+.dark-mode .input::placeholder {
+  color: #89939d;
+}
+
+.dark-mode .input-readonly,
+.dark-mode .payment-overview strong,
+.dark-mode .chart-heading h2,
+.dark-mode .metric strong,
+.dark-mode .invoice-main strong,
+.dark-mode .invoice-amount,
+.dark-mode .client-balance,
+.dark-mode .outstanding-amount,
+.dark-mode .legend-row strong,
+.dark-mode .client-outstanding strong,
+.dark-mode .health-line strong {
+  color: #e5e7eb;
+}
+
+.dark-mode .profile-card,
+.dark-mode .client-outstandings {
+  background-color: #2b302e;
+  border-color: #454b47;
+}
+
+.dark-mode .next-step p:not(.eyebrow),
+.dark-mode .next-actions a {
+  color: #c5ccc8;
+}
+
+.dark-mode .next-actions a {
+  background-color: #292f34;
+  border-color: #454d54;
+}
+
+.dark-mode .pie-chart::after,
+.dark-mode .ring::after {
+  background-color: #22272b;
+}
+
+.dark-mode .pie-chart strong {
+  color: #e5e7eb;
+}
+
+.dark-mode .ring {
+  background: conic-gradient(#d86632 var(--rate), #3a4146 0);
+}
+
+.dark-mode .notice-error,
+.dark-mode .notice {
+  background-color: #382923;
+  border-color: #68412f;
+  color: #f0b899;
+}
+
+.dark-mode .paid-label {
+  color: #6ee7b7;
+}
+
+.approval-link {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.approval-link:hover {
+  text-decoration: underline;
+}
+
+.dark-mode .dashboard {
+  color: #e5e7eb;
+}
+
+.dark-mode .dashboard .title,
+.dark-mode .dashboard .metric strong,
+.dark-mode .dashboard .chart-heading h2,
+.dark-mode .dashboard .invoice-main strong,
+.dark-mode .dashboard .invoice-amount,
+.dark-mode .dashboard .client-balance,
+.dark-mode .dashboard .outstanding-amount,
+.dark-mode .dashboard .legend-row strong,
+.dark-mode .dashboard .client-outstanding strong,
+.dark-mode .dashboard .health-line strong,
+.dark-mode .dashboard .pie-chart strong {
+  color: #e5e7eb;
+}
+
+.dark-mode .dashboard .subtitle,
+.dark-mode .dashboard .metric-top,
+.dark-mode .dashboard .metric small,
+.dark-mode .dashboard .legend-row,
+.dark-mode .dashboard .health-line,
+.dark-mode .dashboard .next-step p:not(.eyebrow) {
+  color: #a1aab4;
+}
+
+.dark-mode .dashboard .metric:not(.metric-featured),
+.dark-mode .dashboard .chart-panel,
+.dark-mode .dashboard .panel,
+.dark-mode .dashboard .next-step {
+  background-color: #22272b;
+  border-color: #373e44;
+}
+
+.dark-mode .dashboard .chart-heading,
+.dark-mode .dashboard .panel-heading,
+.dark-mode .dashboard .invoice-row,
+.dark-mode .dashboard .client-row,
+.dark-mode .dashboard .outstanding-row,
+.dark-mode .dashboard .legend-row,
+.dark-mode .dashboard .client-outstanding {
+  border-color: #373e44;
+}
+
+.dark-mode .dashboard .invoice-row:hover,
+.dark-mode .dashboard .client-outstandings {
+  background-color: #292f34;
+}
+
+.dark-mode .dashboard .pie-chart::after,
+.dark-mode .dashboard .ring::after {
+  background-color: #22272b;
+}
+
+.dark-mode .dashboard .ring {
+  background: conic-gradient(#d86632 var(--rate), #3a4146 0);
+}
+
+.dark-mode .dashboard .next-actions a {
+  color: #f0b899;
+  background-color: #292f34;
+  border-color: #454d54;
+}
+
 
 
